@@ -11,6 +11,9 @@ import androidx.navigation.compose.rememberNavController
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object WeeklyPlan : Screen("WeeklyPlan")
+    object Progress : Screen("progreso")
+    object History : Screen("historial")
+    object Profile : Screen("perfil")
 }
 
 @Composable
@@ -33,16 +36,70 @@ fun App() {
 
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onNavigateToPlan = {
-                        navController.navigate(Screen.WeeklyPlan.route)
+                    onNavigateToPlan = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }
 
             composable(Screen.WeeklyPlan.route) {
                 WeeklyPlanScreen(
-                    onNavigateToHome = {
-                        navController.popBackStack()
+                    onNavigateToHome = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.Progress.route) {
+                ProgressScreen(
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.History.route) {
+                HistoryScreen(
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }

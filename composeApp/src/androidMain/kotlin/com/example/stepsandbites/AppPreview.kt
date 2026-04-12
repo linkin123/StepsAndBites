@@ -27,6 +27,24 @@ fun WeeklyPlanScreenScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
+fun ProgressScreenPreview() {
+    ProgressScreen(onNavigate = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HistoryScreenPreview() {
+    HistoryScreen(onNavigate = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(onNavigate = {})
+}
+
+@Preview(showBackground = true)
+@Composable
 fun TopBarPreview() {
     MaterialTheme {
         TopBar()

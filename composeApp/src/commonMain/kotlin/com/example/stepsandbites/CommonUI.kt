@@ -74,7 +74,7 @@ fun AppBottomNavigation(currentRoute: String, onNavigate: (String) -> Unit) {
                     icon = { Icon(Icons.Default.Home, null) },
                     label = { Text("Inicio", fontSize = 11.sp) },
                     selected = currentRoute == "inicio",
-                    onClick = { onNavigate("inicio") },
+                    onClick = { onNavigate("home") },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = selectedColor,
                         selectedTextColor = selectedColor,
@@ -99,20 +99,41 @@ fun AppBottomNavigation(currentRoute: String, onNavigate: (String) -> Unit) {
                 NavigationBarItem(
                     icon = { Icon(Icons.AutoMirrored.Filled.TrendingUp, null) },
                     label = { Text("Progreso", fontSize = 11.sp) },
-                    selected = false,
-                    onClick = {}
+                    selected = currentRoute == "progreso",
+                    onClick = { onNavigate("progreso") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = selectedColor,
+                        selectedTextColor = selectedColor,
+                        unselectedIconColor = unselectedColor,
+                        unselectedTextColor = unselectedColor,
+                        indicatorColor = Color(0xFFE8F5E9)
+                    )
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.History, null) },
                     label = { Text("Historial", fontSize = 11.sp) },
-                    selected = false,
-                    onClick = {}
+                    selected = currentRoute == "historial",
+                    onClick = { onNavigate("historial") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = selectedColor,
+                        selectedTextColor = selectedColor,
+                        unselectedIconColor = unselectedColor,
+                        unselectedTextColor = unselectedColor,
+                        indicatorColor = Color(0xFFE8F5E9)
+                    )
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Outlined.Person, null) },
                     label = { Text("Perfil", fontSize = 11.sp) },
-                    selected = false,
-                    onClick = {}
+                    selected = currentRoute == "perfil",
+                    onClick = { onNavigate("perfil") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = selectedColor,
+                        selectedTextColor = selectedColor,
+                        unselectedIconColor = unselectedColor,
+                        unselectedTextColor = unselectedColor,
+                        indicatorColor = Color(0xFFE8F5E9)
+                    )
                 )
             }
         }
