@@ -1,4 +1,4 @@
-package com.example.stepsandbites
+package com.example.stepsandbites.features.plan.presentation
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -21,18 +21,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stepsandbites.AppBottomNavigation
+import com.example.stepsandbites.features.plan.model.DayInfo
+import com.example.stepsandbites.features.plan.model.Dish
+import com.example.stepsandbites.features.plan.model.MealType
+import com.example.stepsandbites.features.plan.model.NutritionSummary
 import kotlinx.coroutines.delay
 
 @Composable
 fun WeeklyPlanScreen(
     onNavigateToHome: (String) -> Unit,
-    viewModel: WeeklyPlanViewModel = viewModel { WeeklyPlanViewModel() }
+    viewModel: PlanViewModel
 ) {
-    val selectedDishes by viewModel.selectedDishes.collectAsState()
-    val selectedDay by viewModel.selectedDay.collectAsState()
-    val message by viewModel.message.collectAsState()
-    val nutritionSummary = viewModel.getNutritionSummary()
+    val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -48,34 +49,35 @@ fun WeeklyPlanScreen(
             ) {
                 item {
                     DaySelector(
-                        days = viewModel.days,
-                        selectedDayIndex = selectedDay,
-                        onDaySelected = { viewModel.selectDay(it) }
+                        days = uiState.days,
+                        selectedDayIndex = uiState.selectedDayIndex,
+                        onDaySelected = { viewModel.onEvent(PlanEvent.SelectDay(it)) }
                     )
                 }
 
                 item {
-                    val dayName = viewModel.days[selectedDay].name
-                    val dayNum = viewModel.days[selectedDay].number
-                    Text(
-                        text = "$dayName, $dayNum-13 de Abril",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    if (uiState.days.isNotEmpty()) {
+                        val day = uiState.days[uiState.selectedDayIndex]
+                        Text(
+                            text = "${day.name}, ${day.number}-13 de Abril",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                 }
 
                 item {
-                    NutritionSummaryCard(nutritionSummary)
+                    NutritionSummaryCard(uiState.nutritionSummary)
                 }
 
                 MealType.entries.forEach { mealType ->
                     item {
                         MealSection(
                             mealType = mealType,
-                            dishes = viewModel.allDishes.filter { it.mealType == mealType },
-                            selectedDishIds = selectedDishes,
-                            onToggleDish = { viewModel.toggleDish(it) }
+                            dishes = uiState.allDishes.filter { it.mealType == mealType },
+                            selectedDishIds = uiState.selectedDishIds,
+                            onToggleDish = { viewModel.onEvent(PlanEvent.ToggleDish(it)) }
                         )
                     }
                 }
@@ -85,13 +87,13 @@ fun WeeklyPlanScreen(
         }
 
         AnimatedVisibility(
-            visible = message != null,
+            visible = uiState.message != null,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
             modifier = Modifier.align(Alignment.TopCenter)
         ) {
-            message?.let { msg ->
-                TopBanner(message = msg, onDismiss = { viewModel.clearMessage() })
+            uiState.message?.let { msg ->
+                TopBanner(message = msg, onDismiss = { viewModel.onEvent(PlanEvent.ClearMessage) })
             }
         }
     }

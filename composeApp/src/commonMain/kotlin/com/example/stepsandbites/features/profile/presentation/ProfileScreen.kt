@@ -1,4 +1,4 @@
-package com.example.stepsandbites
+package com.example.stepsandbites.features.profile.presentation
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -23,10 +23,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stepsandbites.AppBottomNavigation
+import com.example.stepsandbites.TopBar
+import com.example.stepsandbites.features.profile.model.UserGoal
 
 @Composable
-fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel = ProfileViewModel()) {
-    val state by viewModel.state.collectAsState()
+fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = { TopBar() },
@@ -40,36 +43,36 @@ fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel = Pr
             ) {
                 // Address Section
                 item {
-                    AddressCard(state.address)
+                    AddressCard(uiState.address)
                 }
 
                 // Goal Section
                 item {
                     GoalSection(
-                        selectedGoal = state.goal,
-                        calories = state.dailyCalories,
-                        onGoalSelected = { viewModel.updateGoal(it) },
-                        onCaloriesChanged = { viewModel.updateCalories(it) }
+                        selectedGoal = uiState.goal,
+                        calories = uiState.dailyCalories,
+                        onGoalSelected = { viewModel.onEvent(ProfileEvent.UpdateGoal(it)) },
+                        onCaloriesChanged = { viewModel.onEvent(ProfileEvent.UpdateCalories(it)) }
                     )
                 }
 
                 // Preferences Section
                 item {
                     PreferencesSection(
-                        selectedPreferences = state.preferences,
-                        onTogglePreference = { viewModel.togglePreference(it) }
+                        selectedPreferences = uiState.preferences,
+                        onTogglePreference = { viewModel.onEvent(ProfileEvent.TogglePreference(it)) }
                     )
                 }
 
                 // Notifications Section
                 item {
                     NotificationsSection(
-                        mealReminders = state.mealReminders,
-                        offers = state.offersAndPromos,
-                        tips = state.nutritionalTips,
-                        onMealRemindersChanged = { viewModel.updateMealReminders(it) },
-                        onOffersChanged = { viewModel.updateOffers(it) },
-                        onTipsChanged = { viewModel.updateTips(it) }
+                        mealReminders = uiState.mealReminders,
+                        offers = uiState.offersAndPromos,
+                        tips = uiState.nutritionalTips,
+                        onMealRemindersChanged = { viewModel.onEvent(ProfileEvent.UpdateMealReminders(it)) },
+                        onOffersChanged = { viewModel.onEvent(ProfileEvent.UpdateOffers(it)) },
+                        onTipsChanged = { viewModel.onEvent(ProfileEvent.UpdateTips(it)) }
                     )
                 }
 
@@ -203,7 +206,7 @@ fun PreferencesSection(selectedPreferences: Set<String>, onTogglePreference: (St
             
             Spacer(Modifier.height(16.dp))
             
-            FlowRow(
+            androidx.compose.foundation.layout.FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -231,23 +234,6 @@ fun PreferencesSection(selectedPreferences: Set<String>, onTogglePreference: (St
                 }
             }
         }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun FlowRow(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    content: @Composable () -> Unit
-) {
-    androidx.compose.foundation.layout.FlowRow(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement
-    ) {
-        content()
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.stepsandbites
+package com.example.stepsandbites.features.history.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,10 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stepsandbites.AppBottomNavigation
+import com.example.stepsandbites.TopBar
+import com.example.stepsandbites.features.history.model.OrderHistory
+import com.example.stepsandbites.features.history.model.OrderItem
 
 @Composable
-fun HistoryScreen(onNavigate: (String) -> Unit, viewModel: HistoryViewModel = HistoryViewModel()) {
-    val orders by viewModel.orders.collectAsState()
+fun HistoryScreen(onNavigate: (String) -> Unit, viewModel: HistoryViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = { TopBar() },
@@ -44,7 +48,7 @@ fun HistoryScreen(onNavigate: (String) -> Unit, viewModel: HistoryViewModel = Hi
                 )
             }
 
-            items(orders) { order ->
+            items(uiState.orders) { order ->
                 OrderHistoryCard(order)
             }
         }

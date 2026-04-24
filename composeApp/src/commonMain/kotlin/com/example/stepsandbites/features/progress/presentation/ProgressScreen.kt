@@ -1,4 +1,4 @@
-package com.example.stepsandbites
+package com.example.stepsandbites.features.progress.presentation
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -21,10 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stepsandbites.AppBottomNavigation
+import com.example.stepsandbites.TopBar
+import com.example.stepsandbites.features.progress.model.Achievement
+import com.example.stepsandbites.features.progress.model.DailyProgress
 
 @Composable
-fun ProgressScreen(onNavigate: (String) -> Unit, viewModel: ProgressViewModel = ProgressViewModel()) {
-    val selectedDayIndex by viewModel.selectedDayIndex.collectAsState()
+fun ProgressScreen(onNavigate: (String) -> Unit, viewModel: ProgressViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = { TopBar() },
@@ -52,14 +56,14 @@ fun ProgressScreen(onNavigate: (String) -> Unit, viewModel: ProgressViewModel = 
 
             item {
                 WeeklyProgressSection(
-                    days = viewModel.weeklyProgress,
-                    selectedIndex = selectedDayIndex,
-                    onDaySelected = { viewModel.selectDay(it) }
+                    days = uiState.weeklyProgress,
+                    selectedIndex = uiState.selectedDayIndex,
+                    onDaySelected = { viewModel.onEvent(ProgressEvent.SelectDay(it)) }
                 )
             }
 
             item {
-                AchievementsSection(achievements = viewModel.achievements)
+                AchievementsSection(achievements = uiState.achievements)
             }
 
             item {

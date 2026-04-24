@@ -1,4 +1,4 @@
-package com.example.stepsandbites
+package com.example.stepsandbites.features.home.presentation
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -18,9 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stepsandbites.AppBottomNavigation
+import com.example.stepsandbites.TopBar
+import com.example.stepsandbites.features.home.model.HomeFoodItem
 
 @Composable
-fun HomeScreen(onNavigateToPlan: (String) -> Unit) {
+fun HomeScreen(onNavigateToPlan: (String) -> Unit, viewModel: HomeViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = { TopBar() },
         bottomBar = { AppBottomNavigation(currentRoute = "inicio", onNavigate = onNavigateToPlan) }
@@ -34,13 +39,13 @@ fun HomeScreen(onNavigateToPlan: (String) -> Unit) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                item { HomeHeaderSection() }
+                item { HomeHeaderSection(uiState) }
 
                 item {
                     HomeSectionHeader(title = "Desayuno", icon = "🌅")
                 }
 
-                items(homeDesayunoItems) { item ->
+                items(uiState.breakfastItems) { item ->
                     HomeFoodCard(item)
                 }
 
@@ -48,7 +53,7 @@ fun HomeScreen(onNavigateToPlan: (String) -> Unit) {
                     HomeSectionHeader(title = "Comida", icon = "🍽️")
                 }
 
-                items(homeComidaItems) { item ->
+                items(uiState.lunchItems) { item ->
                     HomeFoodCard(item)
                 }
 
@@ -56,15 +61,13 @@ fun HomeScreen(onNavigateToPlan: (String) -> Unit) {
                     HomeSectionHeader(title = "Cena", icon = "🌙")
                 }
 
-                items(homeCenaItems) { item ->
+                items(uiState.dinnerItems) { item ->
                     HomeFoodCard(item)
                 }
 
-                // Extra padding for the floating banner
                 item { Spacer(modifier = Modifier.height(100.dp)) }
             }
 
-            // Green Banner at the bottom of the list
             HomePlanificaBanner(
                 onClick = { onNavigateToPlan("WeeklyPlan") },
                 modifier = Modifier
@@ -76,7 +79,7 @@ fun HomeScreen(onNavigateToPlan: (String) -> Unit) {
 }
 
 @Composable
-fun HomeHeaderSection() {
+fun HomeHeaderSection(uiState: HomeUiState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,14 +110,14 @@ fun HomeHeaderSection() {
                     Spacer(Modifier.width(8.dp))
                     Column {
                         Text("Racha", fontSize = 9.sp, color = Color.Gray, lineHeight = 10.sp)
-                        Text("12 días", fontSize = 13.sp, fontWeight = FontWeight.Bold, lineHeight = 13.sp)
+                        Text("${uiState.streakDays} días", fontSize = 13.sp, fontWeight = FontWeight.Bold, lineHeight = 13.sp)
                     }
                 }
             }
         }
 
         Text(
-            "Menú del Lunes 6 de Abril",
+            "Menú del ${uiState.dateText}",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 12.dp)
@@ -124,9 +127,9 @@ fun HomeHeaderSection() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            HomeInfoCard(Modifier.weight(1f), "Calorías hoy", "1,850")
-            HomeInfoCard(Modifier.weight(1f), "Proteína", "120g")
-            HomeInfoCard(Modifier.weight(1f), "Comidas", "0/3")
+            HomeInfoCard(Modifier.weight(1f), "Calorías hoy", "${uiState.dailyCalories}")
+            HomeInfoCard(Modifier.weight(1f), "Proteína", "${uiState.dailyProtein}g")
+            HomeInfoCard(Modifier.weight(1f), "Comidas", uiState.dailyMeals)
         }
     }
 }
@@ -276,62 +279,3 @@ fun HomePlanificaBanner(onClick: () -> Unit, modifier: Modifier = Modifier) {
         }
     }
 }
-
-data class HomeFoodItem(
-    val emoji: String,
-    val name: String,
-    val description: String,
-    val calories: Int,
-    val protein: Int,
-    val carbs: Int,
-    val fat: Int,
-    val price: Double,
-    val tag: String
-)
-
-val homeDesayunoItems = listOf(
-    HomeFoodItem(
-        "🥣",
-        "Bowl de Açaí Proteico",
-        "Bowl energético con açaí orgánico, proteína de alta calidad y frutas frescas",
-        420, 25, 48, 12, 8.99, "Alto en proteína"
-    ),
-    HomeFoodItem(
-        "🍳",
-        "Omelette de Claras con Vegetales",
-        "Omelette ligero cargado de proteína y vegetales frescos",
-        280, 32, 12, 8, 7.99, "Bajo en carbohidratos"
-    )
-)
-
-val homeComidaItems = listOf(
-    HomeFoodItem(
-        "🍗",
-        "Pollo a la Parrilla con Quinoa",
-        "Plato balanceado con proteína magra, granos integrales y vegetales",
-        520, 45, 42, 15, 10.99, "Equilibrado"
-    ),
-    HomeFoodItem(
-        "🥗",
-        "Bowl Buddha Vegano",
-        "Mezcla nutritiva de garbanzos, camote, aguacate and kale con aderezo de tahini",
-        450, 18, 55, 20, 9.50, "Vegano"
-    )
-)
-
-val homeCenaItems = listOf(
-    HomeFoodItem(
-        "🐟",
-        "Salmón con Vegetales Asados",
-        "Cena ligera rica en omega-3 y antioxidantes",
-        450, 38, 22, 24, 15.99, "Rico en omega-3"
-    ),
-    HomeFoodItem(
-        "🦃",
-        "Pavo con Camote y Ensalada",
-        "Cena balanceada con carbohidratos complejos y proteína magra",
-        420, 40, 35, 12, 13.99, "Bajo en grasa"
-    )
-)
-
-

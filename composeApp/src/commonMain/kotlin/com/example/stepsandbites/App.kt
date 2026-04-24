@@ -3,18 +3,12 @@ package com.example.stepsandbites
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-
-
-sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object WeeklyPlan : Screen("WeeklyPlan")
-    object Progress : Screen("progreso")
-    object History : Screen("historial")
-    object Profile : Screen("perfil")
-}
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stepsandbites.features.home.presentation.HomeViewModel
+import com.example.stepsandbites.features.plan.presentation.PlanViewModel
+import com.example.stepsandbites.features.progress.presentation.ProgressViewModel
+import com.example.stepsandbites.features.history.presentation.HistoryViewModel
+import com.example.stepsandbites.features.profile.presentation.ProfileViewModel
 
 @Composable
 fun App() {
@@ -27,82 +21,18 @@ fun App() {
             surface = Color.White,
         )
     ) {
-        val navController = rememberNavController()
+        val homeViewModel: HomeViewModel = viewModel { HomeViewModel() }
+        val planViewModel: PlanViewModel = viewModel { PlanViewModel() }
+        val progressViewModel: ProgressViewModel = viewModel { ProgressViewModel() }
+        val historyViewModel: HistoryViewModel = viewModel { HistoryViewModel() }
+        val profileViewModel: ProfileViewModel = viewModel { ProfileViewModel() }
 
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route
-        ) {
-
-            composable(Screen.Home.route) {
-                HomeScreen(
-                    onNavigateToPlan = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.WeeklyPlan.route) {
-                WeeklyPlanScreen(
-                    onNavigateToHome = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.Progress.route) {
-                ProgressScreen(
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.History.route) {
-                HistoryScreen(
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-
-            composable(Screen.Profile.route) {
-                ProfileScreen(
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        }
+        AppNavigation(
+            homeViewModel = homeViewModel,
+            planViewModel = planViewModel,
+            progressViewModel = progressViewModel,
+            historyViewModel = historyViewModel,
+            profileViewModel = profileViewModel
+        )
     }
 }
