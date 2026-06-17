@@ -78,7 +78,7 @@ fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel) {
 
                 item {
                     Button(
-                        onClick = { /* Save changes */ },
+                        onClick = { viewModel.onEvent(ProfileEvent.Save) },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5ABF86))

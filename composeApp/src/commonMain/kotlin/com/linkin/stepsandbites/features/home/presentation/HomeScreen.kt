@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import com.linkin.stepsandbites.AppBottomNavigation
 import com.linkin.stepsandbites.TopBar
 import com.linkin.stepsandbites.features.home.model.HomeFoodItem
@@ -36,6 +38,15 @@ fun HomeScreen(onNavigateToPlan: (String) -> Unit, viewModel: HomeViewModel) {
                 .padding(paddingValues)
                 .background(Color(0xFFF9F9F9))
         ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else if (uiState.error != null) {
+                Text(
+                    text = uiState.error.toString(),
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                )
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -193,7 +204,16 @@ fun HomeFoodCard(item: HomeFoodItem) {
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color(0xFFF5F5F5))
             ) {
-                Text(item.emoji, modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+                if (item.imageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = item.imageUrl,
+                        contentDescription = item.name,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Text(item.emoji, modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+                }
             }
 
             Spacer(Modifier.width(16.dp))

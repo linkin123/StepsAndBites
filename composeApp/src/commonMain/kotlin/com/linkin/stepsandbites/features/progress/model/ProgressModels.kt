@@ -12,9 +12,17 @@ data class DailyProgress(
 )
 
 data class Achievement(
-    val title: String,
-    val description: String,
-    val icon: String,
-    val badge: String,
-    val color: Long
+    val title: String = "",
+    val description: String = "",
+    val icon: String = "🏆",
+    val badge: String = "🏆",
+    val color: Long = 0xFFE8F5E9
+)
+
+data class UserProgressData(
+    val currentStreak: Int = 0,
+    val personalRecord: Int = 0,
+    val totalMeals: Int = 0,
+    val weeklyProgress: List<DailyProgress> = emptyList(),
+    val achievements: List<Achievement> = emptyList()
 )

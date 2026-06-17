@@ -2,6 +2,8 @@ package com.linkin.stepsandbites.features.plan.presentation
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -224,7 +226,7 @@ fun SummaryItem(value: String, label: String, valueColor: Color) {
 fun MealSection(
     mealType: MealType,
     dishes: List<Dish>,
-    selectedDishIds: Set<Int>,
+    selectedDishIds: Set<String>,
     onToggleDish: (Dish) -> Unit
 ) {
     Card(
@@ -283,7 +285,16 @@ fun DishItem(
                 .background(Color(0xFFF5F5F5)),
             contentAlignment = Alignment.Center
         ) {
-            Text(dish.emoji, fontSize = 32.sp)
+            if (dish.imageUrl.isNotEmpty()) {
+                AsyncImage(
+                    model = dish.imageUrl,
+                    contentDescription = dish.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Text(dish.emoji, fontSize = 32.sp)
+            }
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {

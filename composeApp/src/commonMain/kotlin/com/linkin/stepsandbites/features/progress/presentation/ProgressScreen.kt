@@ -51,12 +51,17 @@ fun ProgressScreen(onNavigate: (String) -> Unit, viewModel: ProgressViewModel) {
             }
 
             item {
-                StreakCard()
+                StreakCard(
+                    currentStreak = uiState.currentStreak,
+                    personalRecord = uiState.personalRecord,
+                    totalMeals = uiState.totalMeals
+                )
             }
 
             item {
                 WeeklyProgressSection(
                     days = uiState.weeklyProgress,
+                    completionPercent = uiState.weeklyCompletionPercent,
                     selectedIndex = uiState.selectedDayIndex,
                     onDaySelected = { viewModel.onEvent(ProgressEvent.SelectDay(it)) }
                 )
@@ -78,7 +83,7 @@ fun ProgressScreen(onNavigate: (String) -> Unit, viewModel: ProgressViewModel) {
 }
 
 @Composable
-fun StreakCard() {
+fun StreakCard(currentStreak: Int, personalRecord: Int, totalMeals: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -103,7 +108,7 @@ fun StreakCard() {
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text("Racha actual", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                    Text("12", color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+                    Text("$currentStreak", color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
                     Text("días consecutivos 🔥", color = Color.White.copy(alpha = 0.9f), fontSize = 14.sp)
                 }
             }
@@ -111,11 +116,11 @@ fun StreakCard() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
                     Text("Récord personal", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
-                    Text("28 días", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("$personalRecord días", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text("Comidas totales", color = Color.White.copy(alpha = 0.8f), fontSize = 13.sp)
-                    Text("156", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("$totalMeals", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
             }
         }
@@ -125,6 +130,7 @@ fun StreakCard() {
 @Composable
 fun WeeklyProgressSection(
     days: List<DailyProgress>,
+    completionPercent: Float,
     selectedIndex: Int,
     onDaySelected: (Int) -> Unit
 ) {
@@ -142,7 +148,7 @@ fun WeeklyProgressSection(
             ) {
                 Text("Progreso Semanal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("86%", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text("${(completionPercent * 100).toInt()}%", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Text("Completado", color = Color.Gray, fontSize = 11.sp)
                 }
             }
@@ -150,7 +156,7 @@ fun WeeklyProgressSection(
             Spacer(Modifier.height(16.dp))
             
             LinearProgressIndicator(
-                progress = { 0.86f },
+                progress = { completionPercent },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
