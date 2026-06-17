@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -44,6 +45,11 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.firestore.ktx)
+            implementation(libs.firebase.auth.ktx)
+            implementation(libs.kotlinx.coroutines.play.services)
+            implementation(libs.coil.network.okhttp)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -54,8 +60,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.compose.material.icons.extended)
-            implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.coil.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

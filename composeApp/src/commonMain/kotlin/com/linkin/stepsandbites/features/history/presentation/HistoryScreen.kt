@@ -31,25 +31,36 @@ fun HistoryScreen(onNavigate: (String) -> Unit, viewModel: HistoryViewModel) {
         topBar = { TopBar() },
         bottomBar = { AppBottomNavigation(currentRoute = "historial", onNavigate = onNavigate) }
     ) { paddingValues ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF9F9F9)),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(Color(0xFFF9F9F9))
         ) {
-            item {
-                Text(
-                    "Historial de Pedidos",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+            when {
+                uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                uiState.error != null -> Text(
+                    text = uiState.error!!,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
                 )
-            }
-
-            items(uiState.orders) { order ->
-                OrderHistoryCard(order)
+                else -> LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        Text(
+                            "Historial de Pedidos",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                    items(uiState.orders) { order ->
+                        OrderHistoryCard(order)
+                    }
+                }
             }
         }
     }

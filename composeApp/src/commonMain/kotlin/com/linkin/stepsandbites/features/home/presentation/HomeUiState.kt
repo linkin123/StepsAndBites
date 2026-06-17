@@ -11,5 +11,6 @@ data class HomeUiState(
     val breakfastItems: List<HomeFoodItem> = emptyList(),
     val lunchItems: List<HomeFoodItem> = emptyList(),
     val dinnerItems: List<HomeFoodItem> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

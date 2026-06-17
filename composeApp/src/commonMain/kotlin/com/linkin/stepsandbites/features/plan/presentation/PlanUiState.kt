@@ -8,7 +8,7 @@ data class PlanUiState(
     val days: List<DayInfo> = emptyList(),
     val selectedDayIndex: Int = 0,
     val allDishes: List<Dish> = emptyList(),
-    val selectedDishIds: Set<Int> = emptySet(),
+    val selectedDishIds: Set<String> = emptySet(),
     val message: String? = null,
     val isLoading: Boolean = false
 ) {

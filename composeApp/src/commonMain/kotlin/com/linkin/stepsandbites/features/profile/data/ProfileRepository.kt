@@ -1,16 +1,9 @@
 package com.linkin.stepsandbites.features.profile.data
 
-import com.linkin.stepsandbites.features.profile.model.UserGoal
 import com.linkin.stepsandbites.features.profile.presentation.ProfileUiState
+import kotlinx.coroutines.flow.Flow
 
-class ProfileRepository {
-    fun getProfile() = ProfileUiState(
-        address = "Av. Reforma 123, CDMX",
-        goal = UserGoal.MAINTAIN_WEIGHT,
-        dailyCalories = "1850",
-        preferences = setOf("Sin gluten"),
-        mealReminders = true,
-        offersAndPromos = true,
-        nutritionalTips = false
-    )
+expect class ProfileRepository() {
+    fun getProfile(userId: String): Flow<ProfileUiState>
+    suspend fun saveProfile(userId: String, uiState: ProfileUiState)
 }

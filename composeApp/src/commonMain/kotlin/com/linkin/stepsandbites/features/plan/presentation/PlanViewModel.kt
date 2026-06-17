@@ -1,12 +1,15 @@
 package com.linkin.stepsandbites.features.plan.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.linkin.stepsandbites.features.plan.data.PlanRepository
 import com.linkin.stepsandbites.features.plan.model.Dish
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 sealed class PlanEvent {
     data class SelectDay(val index: Int) : PlanEvent()
@@ -17,25 +20,26 @@ sealed class PlanEvent {
 class PlanViewModel(
     private val repository: PlanRepository = PlanRepository()
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(PlanUiState())
+    private val _uiState = MutableStateFlow(PlanUiState(days = repository.getDays(), isLoading = true))
     val uiState: StateFlow<PlanUiState> = _uiState.asStateFlow()
 
     init {
-        loadPlanData()
+        loadDishes()
     }
 
-    private fun loadPlanData() {
-        _uiState.value = _uiState.value.copy(
-            days = repository.getDays(),
-            allDishes = repository.getAllDishes()
-        )
+    private fun loadDishes() {
+        viewModelScope.launch {
+            repository.getAllDishes()
+                .catch { _uiState.update { it.copy(isLoading = false) } }
+                .collect { dishes ->
+                    _uiState.update { it.copy(allDishes = dishes, isLoading = false) }
+                }
+        }
     }
 
     fun onEvent(event: PlanEvent) {
         when (event) {
-            is PlanEvent.SelectDay -> {
-                _uiState.update { it.copy(selectedDayIndex = event.index) }
-            }
+            is PlanEvent.SelectDay -> _uiState.update { it.copy(selectedDayIndex = event.index) }
             is PlanEvent.ToggleDish -> {
                 _uiState.update { state ->
                     val newSelected = if (state.selectedDishIds.contains(event.dish.id)) {
@@ -49,9 +53,7 @@ class PlanViewModel(
                     )
                 }
             }
-            PlanEvent.ClearMessage -> {
-                _uiState.update { it.copy(message = null) }
-            }
+            PlanEvent.ClearMessage -> _uiState.update { it.copy(message = null) }
         }
     }
 }
