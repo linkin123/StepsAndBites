@@ -17,6 +17,9 @@ actual class HomeRepository actual constructor() {
                 val items = snapshot?.documents?.mapNotNull { doc ->
                     val data = doc.data ?: return@mapNotNull null
 
+                    val isDeleted = data["isDeleted"] as? Boolean ?: false
+                    if (isDeleted) return@mapNotNull null
+
                     val category = data["category"] as? String ?: "COMIDA"
                     val tags = (data["tags"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
 

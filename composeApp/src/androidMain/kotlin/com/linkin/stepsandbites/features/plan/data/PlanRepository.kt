@@ -24,6 +24,9 @@ actual class PlanRepository actual constructor() {
                 val dishes = snapshot?.documents?.mapNotNull { doc ->
                     val data = doc.data ?: return@mapNotNull null
 
+                    val isDeleted = data["isDeleted"] as? Boolean ?: false
+                    if (isDeleted) return@mapNotNull null
+
                     val category = data["category"] as? String ?: "COMIDA"
                     val mealType = when (category.uppercase()) {
                         "DESAYUNO" -> MealType.BREAKFAST
