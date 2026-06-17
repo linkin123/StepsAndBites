@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.firebase.auth.ktx)
             implementation(libs.kotlinx.coroutines.play.services)
             implementation(libs.coil.network.okhttp)
+            implementation(libs.datastore.preferences)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

@@ -1,21 +1,26 @@
 package com.linkin.stepsandbites
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.linkin.stepsandbites.features.home.presentation.HomeScreen
-import com.linkin.stepsandbites.features.home.presentation.HomeViewModel
-import com.linkin.stepsandbites.features.plan.presentation.WeeklyPlanScreen
-import com.linkin.stepsandbites.features.plan.presentation.PlanViewModel
-import com.linkin.stepsandbites.features.progress.presentation.ProgressScreen
-import com.linkin.stepsandbites.features.progress.presentation.ProgressViewModel
 import com.linkin.stepsandbites.features.history.presentation.HistoryScreen
 import com.linkin.stepsandbites.features.history.presentation.HistoryViewModel
+import com.linkin.stepsandbites.features.home.presentation.HomeScreen
+import com.linkin.stepsandbites.features.home.presentation.HomeViewModel
+import com.linkin.stepsandbites.features.plan.presentation.PlanViewModel
+import com.linkin.stepsandbites.features.plan.presentation.WeeklyPlanScreen
 import com.linkin.stepsandbites.features.profile.presentation.ProfileScreen
 import com.linkin.stepsandbites.features.profile.presentation.ProfileViewModel
+import com.linkin.stepsandbites.features.progress.presentation.ProgressScreen
+import com.linkin.stepsandbites.features.progress.presentation.ProgressViewModel
+import com.linkin.stepsandbites.onboarding.data.OnboardingPreferences
+import com.linkin.stepsandbites.onboarding.presentation.OnboardingScreen
+import com.linkin.stepsandbites.onboarding.presentation.OnboardingViewModel
 
 sealed class Screen(val route: String) {
+    object Onboarding : Screen("onboarding")
     object Home : Screen("home")
     object WeeklyPlan : Screen("WeeklyPlan")
     object Progress : Screen("progreso")
@@ -25,6 +30,8 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavigation(
+    startDestination: String,
+    onboardingPrefs: OnboardingPreferences,
     homeViewModel: HomeViewModel,
     planViewModel: PlanViewModel,
     progressViewModel: ProgressViewModel,
@@ -35,8 +42,22 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = startDestination
     ) {
+        composable(Screen.Onboarding.route) {
+            val onboardingViewModel: OnboardingViewModel = viewModel {
+                OnboardingViewModel(onboardingPrefs)
+            }
+            OnboardingScreen(
+                viewModel = onboardingViewModel,
+                onFinished = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToPlan = { route ->
