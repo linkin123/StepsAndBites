@@ -68,11 +68,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.stepsandbites"
+    namespace = "com.linkin.stepsandbites"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.stepsandbites"
+        applicationId = "com.linkin.stepsandbites"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -100,11 +100,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.example.stepsandbites.MainKt"
+        mainClass = "com.linkin.stepsandbites.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.example.stepsandbites"
+            packageName = "com.linkin.stepsandbites"
             packageVersion = "1.0.0"
         }
     }
