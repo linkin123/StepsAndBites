@@ -18,6 +18,7 @@ import com.linkin.stepsandbites.features.home.presentation.HomeViewModel
 import com.linkin.stepsandbites.features.plan.presentation.PlanViewModel
 import com.linkin.stepsandbites.features.profile.presentation.ProfileViewModel
 import com.linkin.stepsandbites.features.progress.presentation.ProgressViewModel
+import com.linkin.stepsandbites.auth.isFirebaseUserSignedIn
 import com.linkin.stepsandbites.onboarding.data.OnboardingPreferences
 
 @Composable
@@ -41,7 +42,11 @@ fun App() {
             return@MaterialTheme
         }
 
-        val startDestination = if (isOnboardingCompleted == true) "home" else "onboarding"
+        val startDestination = when {
+            isOnboardingCompleted != true -> "onboarding"
+            !isFirebaseUserSignedIn() -> "login"
+            else -> "home"
+        }
 
         val homeViewModel: HomeViewModel = viewModel { HomeViewModel() }
         val planViewModel: PlanViewModel = viewModel { PlanViewModel() }

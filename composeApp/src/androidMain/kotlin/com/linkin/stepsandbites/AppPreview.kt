@@ -49,7 +49,7 @@ fun HistoryScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(onNavigate = {}, viewModel = ProfileViewModel())
+    ProfileScreen(onNavigate = {}, onSignOut = {}, viewModel = ProfileViewModel())
 }
 
 @Preview(showBackground = true)

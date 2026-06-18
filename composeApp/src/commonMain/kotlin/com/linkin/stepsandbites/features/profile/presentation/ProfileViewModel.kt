@@ -3,10 +3,14 @@ package com.linkin.stepsandbites.features.profile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.linkin.stepsandbites.CurrentUser
+import com.linkin.stepsandbites.auth.signOutUser
 import com.linkin.stepsandbites.features.profile.data.ProfileRepository
 import com.linkin.stepsandbites.features.profile.model.UserGoal
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
@@ -20,6 +24,7 @@ sealed class ProfileEvent {
     data class UpdateOffers(val enabled: Boolean) : ProfileEvent()
     data class UpdateTips(val enabled: Boolean) : ProfileEvent()
     object Save : ProfileEvent()
+    object SignOut : ProfileEvent()
 }
 
 class ProfileViewModel(
@@ -27,6 +32,9 @@ class ProfileViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState(isLoading = true))
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+
+    private val _signOutEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val signOutEvent: SharedFlow<Unit> = _signOutEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -56,6 +64,10 @@ class ProfileViewModel(
                 viewModelScope.launch {
                     repository.saveProfile(CurrentUser.userId, _uiState.value)
                 }
+            }
+            ProfileEvent.SignOut -> {
+                signOutUser()
+                _signOutEvent.tryEmit(Unit)
             }
         }
     }

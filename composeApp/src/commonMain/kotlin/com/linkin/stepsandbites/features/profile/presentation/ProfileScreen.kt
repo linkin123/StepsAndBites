@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material3.*
@@ -28,8 +29,12 @@ import com.linkin.stepsandbites.TopBar
 import com.linkin.stepsandbites.features.profile.model.UserGoal
 
 @Composable
-fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel) {
+fun ProfileScreen(onNavigate: (String) -> Unit, onSignOut: () -> Unit, viewModel: ProfileViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.signOutEvent.collect { onSignOut() }
+    }
 
     Scaffold(
         topBar = { TopBar() },
@@ -86,7 +91,25 @@ fun ProfileScreen(onNavigate: (String) -> Unit, viewModel: ProfileViewModel) {
                         Text("Guardar Cambios", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
-                
+
+                item {
+                    OutlinedButton(
+                        onClick = { viewModel.onEvent(ProfileEvent.SignOut) },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFE53935)),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE53935))
+                    ) {
+                        Icon(
+                            Icons.Default.Logout,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text("Cerrar Sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+
                 item { Spacer(modifier = Modifier.height(16.dp)) }
             }
         }
