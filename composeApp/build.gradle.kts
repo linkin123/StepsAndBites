@@ -51,6 +51,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.play.services)
             implementation(libs.coil.network.okhttp)
             implementation(libs.datastore.preferences)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services.auth)
+            implementation(libs.googleid)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -84,6 +87,9 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+    }
+    buildFeatures {
+        resValues = true
     }
     packaging {
         resources {

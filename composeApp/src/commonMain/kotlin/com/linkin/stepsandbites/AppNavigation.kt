@@ -15,11 +15,13 @@ import com.linkin.stepsandbites.features.profile.presentation.ProfileScreen
 import com.linkin.stepsandbites.features.profile.presentation.ProfileViewModel
 import com.linkin.stepsandbites.features.progress.presentation.ProgressScreen
 import com.linkin.stepsandbites.features.progress.presentation.ProgressViewModel
+import com.linkin.stepsandbites.auth.presentation.LoginScreen
 import com.linkin.stepsandbites.onboarding.data.OnboardingPreferences
 import com.linkin.stepsandbites.onboarding.presentation.OnboardingScreen
 import com.linkin.stepsandbites.onboarding.presentation.OnboardingViewModel
 
 sealed class Screen(val route: String) {
+    object Login : Screen("login")
     object Onboarding : Screen("onboarding")
     object Home : Screen("home")
     object WeeklyPlan : Screen("WeeklyPlan")
@@ -44,6 +46,16 @@ fun AppNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.Onboarding.route) {
             val onboardingViewModel: OnboardingViewModel = viewModel {
                 OnboardingViewModel(onboardingPrefs)
@@ -127,6 +139,11 @@ fun AppNavigation(
                         }
                         launchSingleTop = true
                         restoreState = true
+                    }
+                },
+                onSignOut = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 },
                 viewModel = profileViewModel
